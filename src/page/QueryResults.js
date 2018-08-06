@@ -3,8 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 
 import axios from "axios";
 import jsSHA from "jssha";
+import API from "../API/API";
 
-export default class QueryResult extends Component {
+export default class QueryResults extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -15,8 +16,8 @@ export default class QueryResult extends Component {
   }
 
   getAuthorizationHeader() {
-    const AppID = "d589440717e649fb8d67b065d46d1252";
-    const AppKey = "uxMnkiJ3ZynHE0Bzog4DIW5tW_E";
+    const AppID = API.AppID;
+    const AppKey = API.AppKey;
 
     const GMTString = new Date().toGMTString();
     const ShaObj = new jsSHA("SHA-1", "TEXT");

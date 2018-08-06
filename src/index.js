@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 
 import HomePage from "./page/HomePage";
-import QueryResult from "./page/QueryResult";
+import QueryResult from "./page/QueryResults";
 
 const Setup = StackNavigator(
   {
