@@ -14,9 +14,9 @@ const Setup = StackNavigator(
   {
     initialRouteName: "HomePage",
     navigationOptions: {
-      headerStyle: { backgroundColor: "rgb(200,200,200)" },
+      // headerStyle: { backgroundColor: "rgb(200,200,200)" },
       headerBackTitle: " ",
-      headerTintColor: "rgb(70,74,73)",
+      // headerTintColor: "rgb(70,74,73)",
       gesturesEnabled: Platform.OS === "ios" ? true : false
     }
   }

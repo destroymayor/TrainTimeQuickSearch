@@ -106,6 +106,9 @@ export default class HomePage extends Component {
   }
 
   RequestTrainTimeData() {
+    const RequestUrl_TimeFilter =
+      "$filter=OriginStopTime%2FArrivalTime%20gt%20'" + this.state.Hours + "%3A" + this.state.Minutes + "'";
+    const RequestUrl_Order = "$orderby=OriginStopTime%2FArrivalTime";
     const RequestUrl =
       "http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/DailyTimetable/OD/" +
       this.state.PointOfDepartureCode +
@@ -113,7 +116,11 @@ export default class HomePage extends Component {
       this.state.ArrivalPointCode +
       "/" +
       this.state.QueryDates +
-      "?$format=JSON";
+      "?" +
+      RequestUrl_TimeFilter +
+      "&" +
+      RequestUrl_Order +
+      "&$format=JSON";
     this.props.navigation.navigate("QueryResult", { RequestUrl: RequestUrl });
   }
 
