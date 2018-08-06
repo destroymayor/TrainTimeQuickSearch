@@ -22,8 +22,8 @@ export default class HomePage extends Component {
         "-" +
         (Dates.getDate() < 10 ? "0" : "") +
         Dates.getDate(),
-      Hours: (Dates.getHours() < 10 ? "0" : "") + Dates.getHours(),
-      Minutes: (Dates.getMinutes() < 10 ? "0" : "") + Dates.getMinutes(),
+      QueryHours: (Dates.getHours() < 10 ? "0" : "") + Dates.getHours(),
+      QueryMinutes: (Dates.getMinutes() < 10 ? "0" : "") + Dates.getMinutes(),
       isDateTimePickerVisible: false,
       isDateTimePickerTimeVisible: false,
       PointOfDeparture: "福隆",
@@ -88,8 +88,8 @@ export default class HomePage extends Component {
 
   handleDatePickedTime = date => {
     this.setState({
-      Hours: (date.getHours() < 10 ? "0" : "") + date.getHours(),
-      Minutes: (date.getMinutes() < 10 ? "0" : "") + date.getMinutes()
+      QueryHours: (date.getHours() < 10 ? "0" : "") + date.getHours(),
+      QueryMinutes: (date.getMinutes() < 10 ? "0" : "") + date.getMinutes()
     });
 
     console.log(date);
@@ -106,8 +106,9 @@ export default class HomePage extends Component {
   }
 
   RequestTrainTimeData() {
+    //起訖站查詢
     const RequestUrl_TimeFilter =
-      "$filter=OriginStopTime%2FArrivalTime%20gt%20'" + this.state.Hours + "%3A" + this.state.Minutes + "'";
+      "$filter=OriginStopTime%2FArrivalTime%20gt%20'" + this.state.QueryHours + "%3A" + this.state.QueryMinutes + "'";
     const RequestUrl_Order = "$orderby=OriginStopTime%2FArrivalTime";
     const RequestUrl =
       "http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/DailyTimetable/OD/" +
@@ -121,6 +122,14 @@ export default class HomePage extends Component {
       "&" +
       RequestUrl_Order +
       "&$format=JSON";
+
+    //起迄站車票查詢
+    const RequestUrl_Price =
+      "http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/ODFare/" +
+      this.state.PointOfDepartureCode +
+      "/to/" +
+      this.state.ArrivalPointCode +
+      "?&$format=JSON";
     this.props.navigation.navigate("QueryResult", { RequestUrl: RequestUrl });
   }
 
@@ -188,7 +197,7 @@ export default class HomePage extends Component {
           />
           <Button
             ButtonIcon={<Icon name="clock" size={20} color="#fff" />}
-            ButtonText={" " + this.state.Hours + ":" + this.state.Minutes + " 出發"}
+            ButtonText={" " + this.state.QueryHours + ":" + this.state.QueryMinutes + " 出發"}
             TextStyle={styles.TextStyle}
             ButtonStyle={styles.ButtonStyle}
             onPress={() => {
