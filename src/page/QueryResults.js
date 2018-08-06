@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 
 import Icon from "react-native-vector-icons/Feather";
 
@@ -12,6 +12,7 @@ export default class QueryResults extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      shouldRenderView: false,
       RequestData: ""
     };
   }
@@ -41,7 +42,8 @@ export default class QueryResults extends Component {
       const response = await axios.get(params.RequestUrl, { headers: this.getAuthorizationHeader() });
       console.log(response.data);
       this.setState({
-        RequestData: response.data
+        RequestData: response.data,
+        shouldRenderView: true
       });
     } catch (error) {
       console.error(error);
@@ -59,13 +61,13 @@ export default class QueryResults extends Component {
       (Dates.getDate() < 10 ? "0" : "") +
       Dates.getDate() +
       " ";
-    const OriginStopTimeArrivalTime = new Date(DatesYearMonthDay + OriginStopTime);
-    const DestinationStopTimeArrivalTime = new Date(DatesYearMonthDay + DestinationStopTime);
-    const TimeDifference = DestinationStopTimeArrivalTime.getTime() - OriginStopTimeArrivalTime.getTime();
-    const DayNumberOfRemainingMilliseconds = TimeDifference % (24 * 3600 * 1000);
-    const ArrivalTimeMinutesHours = Math.floor(DayNumberOfRemainingMilliseconds / (3600 * 1000));
-    const HoursNumberOfRemainingMilliseconds = DayNumberOfRemainingMilliseconds % (3600 * 1000);
-    const ArrivalTimeMinutes = Math.floor(HoursNumberOfRemainingMilliseconds / (60 * 1000));
+    let OriginStopTimeArrivalTime = new Date(DatesYearMonthDay + OriginStopTime);
+    let DestinationStopTimeArrivalTime = new Date(DatesYearMonthDay + DestinationStopTime);
+    let TimeDifference = DestinationStopTimeArrivalTime.getTime() - OriginStopTimeArrivalTime.getTime();
+    let DayNumberOfRemainingMilliseconds = TimeDifference % (24 * 3600 * 1000);
+    let ArrivalTimeMinutesHours = Math.floor(DayNumberOfRemainingMilliseconds / (3600 * 1000));
+    let HoursNumberOfRemainingMilliseconds = DayNumberOfRemainingMilliseconds % (3600 * 1000);
+    let ArrivalTimeMinutes = Math.floor(HoursNumberOfRemainingMilliseconds / (60 * 1000));
 
     const ResultHours = ArrivalTimeMinutesHours === 0 ? "" : ArrivalTimeMinutesHours + "小時";
     const ResultMinutes = ArrivalTimeMinutes === 0 ? "" : ArrivalTimeMinutes + "分";
@@ -76,36 +78,40 @@ export default class QueryResults extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <FlatList
-          data={this.state.RequestData}
-          keyExtractor={(item, index) => index.toString()}
-          initialNumToRender={8}
-          renderItem={({ item }) => {
-            return (
-              <View style={styles.TrainTimeDataList}>
-                <View style={styles.TrainTimeDataListItem}>
-                  <Text>
-                    {item.DailyTrainInfo.TrainNo}
-                    {item.DailyTrainInfo.TripLine === 1 ? " 山線" : item.DailyTrainInfo.TripLine === 2 ? " 海線" : ""}
-                  </Text>
-                  <Text>{item.DailyTrainInfo.TrainTypeName.Zh_tw}</Text>
-                  <Text>
-                    {item.DailyTrainInfo.StartingStationName.Zh_tw}=> {item.DailyTrainInfo.EndingStationName.Zh_tw}
-                  </Text>
+        {this.state.shouldRenderView ? (
+          <FlatList
+            data={this.state.RequestData}
+            keyExtractor={(item, index) => index.toString()}
+            initialNumToRender={8}
+            renderItem={({ item }) => {
+              return (
+                <View style={styles.TrainTimeDataList}>
+                  <View style={styles.TrainTimeDataListItem}>
+                    <Text>
+                      {item.DailyTrainInfo.TrainNo}
+                      {item.DailyTrainInfo.TripLine === 1 ? " 山線" : item.DailyTrainInfo.TripLine === 2 ? " 海線" : ""}
+                    </Text>
+                    <Text>{item.DailyTrainInfo.TrainTypeName.Zh_tw}</Text>
+                    <Text>
+                      {item.DailyTrainInfo.StartingStationName.Zh_tw}=> {item.DailyTrainInfo.EndingStationName.Zh_tw}
+                    </Text>
+                  </View>
+                  <View style={styles.TrainTimeDataListItem}>
+                    <Text>
+                      {item.OriginStopTime.ArrivalTime} {<Icon name="arrow-right" size={18} color="#222" />}{" "}
+                      {item.DestinationStopTime.ArrivalTime}
+                    </Text>
+                    <Text>
+                      {this.TimeDifferenceCalculation(item.OriginStopTime.ArrivalTime, item.DestinationStopTime.ArrivalTime)}
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.TrainTimeDataListItem}>
-                  <Text>
-                    {item.OriginStopTime.ArrivalTime} {<Icon name="arrow-right" size={18} color="#222" />}{" "}
-                    {item.DestinationStopTime.ArrivalTime}
-                  </Text>
-                  <Text>
-                    {this.TimeDifferenceCalculation(item.OriginStopTime.ArrivalTime, item.DestinationStopTime.ArrivalTime)}
-                  </Text>
-                </View>
-              </View>
-            );
-          }}
-        />
+              );
+            }}
+          />
+        ) : (
+          <ActivityIndicator size="large" color="#2894ff" />
+        )}
       </View>
     );
   }

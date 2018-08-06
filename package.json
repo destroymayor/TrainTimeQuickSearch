@@ -4,7 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "android:build": "cd android && ./gradlew assembleRelease",
+    "android:install": "cd android && ./gradlew installRelease",
+    "android:clean": "cd android && ./gradlew clean",
+    "run-android": "react-native run-android",
+    "run-ios": "react-native run-ios",
+    "log-ios": "react-native log-ios"
   },
   "dependencies": {
     "axios": "^0.18.0",
