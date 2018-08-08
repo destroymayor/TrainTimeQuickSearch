@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 export default class Button extends Component {
   render() {

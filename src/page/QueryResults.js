@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import Icon from "react-native-vector-icons/Feather";
 
@@ -21,12 +21,16 @@ export default class QueryResults extends Component {
 
   static navigationOptions = ({ navigation }) => ({
     headerTitle: (
-      <Text style={{ fontSize: 16 }}>
+      <Text style={{ fontSize: 16, color: "#ffffff" }}>
         {navigation.state.params.PointOfDeparture}
-        <Icon name="chevron-right" size={16} color="#222" />
+        <Icon name="chevron-right" size={16} color="#ffffff" />
         {navigation.state.params.ArrivalPoint}
       </Text>
-    )
+    ),
+    headerTintColor: "#ffffff",
+    headerStyle: {
+      backgroundColor: "rgb(40,44,52)"
+    }
   });
 
   componentDidMount() {
@@ -91,6 +95,7 @@ export default class QueryResults extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : null}
         {this.state.shouldRenderView ? (
           <FlatList
             data={this.state.RequestData}

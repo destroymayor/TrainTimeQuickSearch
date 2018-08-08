@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, PermissionsAndroid, StyleSheet, View } from "react-native";
+import { Platform, StatusBar, StyleSheet, View } from "react-native";
 
 import Icon from "react-native-vector-icons/Feather";
 import Picker from "react-native-picker";
@@ -36,8 +36,6 @@ export default class HomePage extends Component {
     };
   }
 
-  static navigationOptions = { header: null };
-
   componentDidMount() {
     this.autoGeolocation();
   }
@@ -51,7 +49,9 @@ export default class HomePage extends Component {
               this.setState({
                 MainArea: MainAreaLocation,
                 PointOfDeparture: Object.keys(LocationValue)[0],
-                PointOfDepartureCode: Object.values(LocationValue)[0][0]
+                PointOfDepartureCode: Object.values(LocationValue)[0][0],
+                ArrivalPoint: Object.keys(LocationValue)[0],
+                ArrivalPointCode: Object.values(LocationValue)[0][0]
               });
             }
           });
@@ -70,10 +70,11 @@ export default class HomePage extends Component {
       pickerTitleText: "",
       pickerToolBarFontSize: 18,
       pickerFontSize: 18,
-      pickerConfirmBtnColor: [91, 91, 91, 91],
-      pickerCancelBtnColor: [91, 91, 91, 91],
-      pickerToolBarBg: [252, 252, 252, 252],
-      pickerBg: [252, 252, 252, 252],
+      pickerFontColor: [255, 255, 255, 255],
+      pickerConfirmBtnColor: [255, 255, 255, 255],
+      pickerCancelBtnColor: [255, 255, 255, 255],
+      pickerToolBarBg: [40, 44, 52, 255],
+      pickerBg: [40, 44, 52, 255],
       onPickerConfirm: data => {
         switch (SinceAndAfter) {
           case "PointOfDeparture":
@@ -168,6 +169,7 @@ export default class HomePage extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : null}
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
           is24Hour={true}
@@ -202,7 +204,7 @@ export default class HomePage extends Component {
             }}
           />
           <Button
-            ButtonText={<Icon name="refresh-cw" size={30} color="#2897ff" />}
+            ButtonText={<Icon name="refresh-cw" size={30} color="#ffffff" />}
             ButtonStyle={styles.IconStyle}
             onPress={() => {
               this.SiteInterchange();
@@ -258,7 +260,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(194,223,239)"
+    backgroundColor: "rgb(40,44,52)"
   },
   IconStyle: {
     margin: 5,
