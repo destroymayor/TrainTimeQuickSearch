@@ -100,7 +100,7 @@ export default class QueryResults extends Component {
           <FlatList
             data={this.state.RequestData}
             keyExtractor={(item, index) => index.toString()}
-            initialNumToRender={5}
+            initialNumToRender={10}
             renderItem={({ item }) => {
               return (
                 <View style={styles.TrainTimeDataList}>

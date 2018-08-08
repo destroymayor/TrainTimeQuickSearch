@@ -74,7 +74,7 @@ export default class HomePage extends Component {
       pickerConfirmBtnColor: [255, 255, 255, 255],
       pickerCancelBtnColor: [255, 255, 255, 255],
       pickerToolBarBg: [40, 44, 52, 255],
-      pickerBg: [40, 44, 52, 255],
+      pickerBg: [40, 44, 52, 5],
       onPickerConfirm: data => {
         switch (SinceAndAfter) {
           case "PointOfDeparture":
@@ -194,47 +194,47 @@ export default class HomePage extends Component {
           onCancel={this.hideDateTimePicker}
           neverDisableConfirmIOS={true}
         />
-        <View>
+        <View style={{ flexDirection: "row", marginBottom: 20 }}>
           <Button
-            ButtonText={"出發車站 " + this.state.PointOfDeparture}
+            ButtonText={this.state.PointOfDeparture + "站"}
             TextStyle={styles.TextStyle}
-            ButtonStyle={styles.ButtonStyle}
+            ButtonStyle={styles.StationSelectionStyle}
             onPress={() => {
               this.showPickerFromStation("PointOfDeparture");
             }}
           />
           <Button
-            ButtonText={<Icon name="refresh-cw" size={30} color="#ffffff" />}
+            ButtonText={<Icon name="chevron-right" size={35} color="rgb(255,255,255)" />}
             ButtonStyle={styles.IconStyle}
             onPress={() => {
               this.SiteInterchange();
             }}
           />
           <Button
-            ButtonText={"到達車站 " + this.state.ArrivalPoint}
+            ButtonText={this.state.ArrivalPoint + "站"}
             TextStyle={styles.TextStyle}
-            ButtonStyle={styles.ButtonStyle}
+            ButtonStyle={styles.StationSelectionStyle}
             onPress={() => {
               this.showPickerFromStation("ArrivalPoint");
             }}
           />
         </View>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", marginTop: 20, marginBottom: 10 }}>
           <Button
-            ButtonIcon={<Icon name="calendar" size={20} color="#222222" />}
+            ButtonIcon={<Icon name="calendar" size={20} color="rgb(255,255,255)" />}
             ButtonText={" " + this.state.QueryDates}
-            TextStyle={styles.TextStyle}
-            ButtonStyle={styles.ButtonStyle}
+            TextStyle={styles.TimeSelectionTextStyle}
+            ButtonStyle={styles.TimeSelectionStyle}
             onPress={() => {
               Picker.hide();
               this.setState({ isDateTimePickerVisible: true });
             }}
           />
           <Button
-            ButtonIcon={<Icon name="clock" size={20} color="#222222" />}
+            ButtonIcon={<Icon name="clock" size={20} color="rgb(255,255,255)" />}
             ButtonText={" " + this.state.QueryHours + ":" + this.state.QueryMinutes + " 出發"}
-            TextStyle={styles.TextStyle}
-            ButtonStyle={styles.ButtonStyle}
+            TextStyle={styles.TimeSelectionTextStyle}
+            ButtonStyle={styles.TimeSelectionStyle}
             onPress={() => {
               Picker.hide();
               this.setState({ isDateTimePickerTimeVisible: true });
@@ -244,7 +244,7 @@ export default class HomePage extends Component {
         <Button
           ButtonText={"查詢"}
           TextStyle={styles.TextStyle}
-          ButtonStyle={[styles.ButtonStyle, { width: "85%" }]}
+          ButtonStyle={styles.TrainSearchStyle}
           onPress={() => {
             Picker.hide();
             this.RequestTrainTimeData();
@@ -262,22 +262,48 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgb(40,44,52)"
   },
+  StationSelectionStyle: {
+    width: "40%",
+    height: 60,
+    padding: 8,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0)",
+    borderBottomWidth: 1,
+    borderBottomColor: "rgb(255,255,255)"
+  },
+  TextStyle: {
+    color: "rgb(255,255,255)",
+    fontSize: 20
+  },
   IconStyle: {
     margin: 5,
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center"
   },
-  ButtonStyle: {
-    width: 150,
-    height: 40,
-    margin: 5,
-    borderRadius: 5,
+  TimeSelectionStyle: {
+    width: "40%",
+    height: 50,
+    margin: 10,
+    borderRadius: 35,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(139,205,239)"
+    backgroundColor: "rgb(57,152,137)"
   },
-  TextStyle: {
-    color: "#222222"
+  TimeSelectionTextStyle: {
+    color: "rgb(255,255,255)",
+    fontSize: 17
+  },
+  TrainSearchStyle: {
+    width: "60%",
+    height: 50,
+    margin: 10,
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "rgb(255,255,255)",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
