@@ -51,6 +51,8 @@
         <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
         <true/>
 			</dict>
+      <key>NSLocationWhenInUseUsageDescription</key>
+      <string>自動定位需要使用定位權限</string>
 		</dict>
 	</dict>
 	<key>UIAppFonts</key>

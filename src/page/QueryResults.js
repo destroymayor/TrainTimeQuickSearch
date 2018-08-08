@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/Feather";
 import axios from "axios";
 import jsSHA from "jssha";
 
+import Button from "../util/Button";
 import API from "../API/API";
 
 export default class QueryResults extends Component {
@@ -13,9 +14,20 @@ export default class QueryResults extends Component {
     super(props);
     this.state = {
       shouldRenderView: false,
-      RequestData: ""
+      RequestData: [],
+      RequestPrice: []
     };
   }
+
+  static navigationOptions = ({ navigation }) => ({
+    headerTitle: (
+      <Text style={{ fontSize: 16 }}>
+        {navigation.state.params.PointOfDeparture}
+        <Icon name="chevron-right" size={16} color="#222" />
+        {navigation.state.params.ArrivalPoint}
+      </Text>
+    )
+  });
 
   componentDidMount() {
     this.RequestTrainTimeData();
@@ -37,40 +49,41 @@ export default class QueryResults extends Component {
 
   async RequestTrainTimeData() {
     const { params } = this.props.navigation.state;
-    console.log(params.RequestUrl);
     try {
-      const response = await axios.get(params.RequestUrl, { headers: this.getAuthorizationHeader() });
-      console.log(response.data);
-      this.setState({
-        RequestData: response.data,
-        shouldRenderView: true
-      });
-    } catch (error) {
-      console.error(error);
-    }
+      const RequestTrainTimeData = await axios.get(params.RequestUrl, { headers: this.getAuthorizationHeader() });
+      if (RequestTrainTimeData.data.length > 0) {
+        this.setState({
+          RequestData: RequestTrainTimeData.data,
+          shouldRenderView: true
+        });
+      }
+    } catch (error) {}
+
+    // try {
+    //   const RequestTrainPriceData = await axios.get(params.RequestUrl_Price, { headers: this.getAuthorizationHeader() });
+    //   this.setState({ RequestPrice: RequestTrainPriceData.data[0].Fares });
+    //   console.log(RequestTrainPriceData.data[0].Fares);
+    // } catch (error) {}
   }
 
   TimeDifferenceCalculation(OriginStopTime, DestinationStopTime) {
     const Dates = new Date();
     const DatesYearMonthDay =
       Dates.getFullYear() +
-      "-" +
+      "/" +
       (Dates.getMonth() + 1 < 10 ? "0" : "") +
       (Dates.getMonth() + 1) +
-      "-" +
+      "/" +
       (Dates.getDate() < 10 ? "0" : "") +
       Dates.getDate() +
       " ";
-    let OriginStopTimeArrivalTime = new Date(DatesYearMonthDay + OriginStopTime);
-    let DestinationStopTimeArrivalTime = new Date(DatesYearMonthDay + DestinationStopTime);
-    let TimeDifference = DestinationStopTimeArrivalTime.getTime() - OriginStopTimeArrivalTime.getTime();
-    let DayNumberOfRemainingMilliseconds = TimeDifference % (24 * 3600 * 1000);
-    let ArrivalTimeMinutesHours = Math.floor(DayNumberOfRemainingMilliseconds / (3600 * 1000));
-    let HoursNumberOfRemainingMilliseconds = DayNumberOfRemainingMilliseconds % (3600 * 1000);
-    let ArrivalTimeMinutes = Math.floor(HoursNumberOfRemainingMilliseconds / (60 * 1000));
 
-    const ResultHours = ArrivalTimeMinutesHours === 0 ? "" : ArrivalTimeMinutesHours + "小時";
-    const ResultMinutes = ArrivalTimeMinutes === 0 ? "" : ArrivalTimeMinutes + "分";
+    const OriginStopTimeArrivalTime = new Date(DatesYearMonthDay + OriginStopTime);
+    const DestinationStopTimeTime = new Date(DatesYearMonthDay + DestinationStopTime);
+    const CalculateDate = new Date(DestinationStopTimeTime - OriginStopTimeArrivalTime);
+
+    const ResultHours = CalculateDate.getUTCHours() === 0 ? "" : CalculateDate.getUTCHours() + "小時";
+    const ResultMinutes = CalculateDate.getUTCMinutes() === 0 ? "" : CalculateDate.getUTCMinutes() + "分";
 
     return ResultHours + ResultMinutes;
   }
@@ -82,28 +95,41 @@ export default class QueryResults extends Component {
           <FlatList
             data={this.state.RequestData}
             keyExtractor={(item, index) => index.toString()}
-            initialNumToRender={8}
+            initialNumToRender={5}
             renderItem={({ item }) => {
               return (
                 <View style={styles.TrainTimeDataList}>
                   <View style={styles.TrainTimeDataListItem}>
-                    <Text>
+                    {/* 車次 山海線 */}
+                    <Text style={styles.TrainTimeDataListItemText}>
                       {item.DailyTrainInfo.TrainNo}
-                      {item.DailyTrainInfo.TripLine === 1 ? " 山線" : item.DailyTrainInfo.TripLine === 2 ? " 海線" : ""}
+                      {item.DailyTrainInfo.TripLine === 1 ? " - 山線" : item.DailyTrainInfo.TripLine === 2 ? " - 海線" : ""}
                     </Text>
-                    <Text>{item.DailyTrainInfo.TrainTypeName.Zh_tw}</Text>
-                    <Text>
-                      {item.DailyTrainInfo.StartingStationName.Zh_tw}=> {item.DailyTrainInfo.EndingStationName.Zh_tw}
+                    {/* 火車類型 */}
+                    <Text style={styles.TrainTimeDataListItemText}>{item.DailyTrainInfo.TrainTypeName.Zh_tw}</Text>
+                    {/* 起點站及終點站 */}
+                    <Text style={styles.TrainTimeDataListItemText}>
+                      {item.DailyTrainInfo.StartingStationName.Zh_tw} {<Icon name="chevron-right" size={15} color="#222" />}{" "}
+                      {item.DailyTrainInfo.EndingStationName.Zh_tw}
                     </Text>
                   </View>
-                  <View style={styles.TrainTimeDataListItem}>
-                    <Text>
-                      {item.OriginStopTime.ArrivalTime} {<Icon name="arrow-right" size={18} color="#222" />}{" "}
+                  <View style={[styles.TrainTimeDataListItem, { alignItems: "center" }]}>
+                    {/* 到達時間及行駛時間 */}
+                    <Text style={styles.TrainTimeDataListItemText}>
+                      {item.OriginStopTime.ArrivalTime} {<Icon name="chevron-right" size={15} color="#222" />}{" "}
                       {item.DestinationStopTime.ArrivalTime}
                     </Text>
-                    <Text>
+                    <Text style={styles.TrainTimeDataListItemText}>
                       {this.TimeDifferenceCalculation(item.OriginStopTime.ArrivalTime, item.DestinationStopTime.ArrivalTime)}
                     </Text>
+                  </View>
+                  <View style={[styles.TrainTimeDataListItem, { alignItems: "center" }]}>
+                    <Button
+                      ButtonText={"訂票"}
+                      TextStyle={styles.TextStyle}
+                      ButtonStyle={styles.ButtonStyle}
+                      onPress={() => {}}
+                    />
                   </View>
                 </View>
               );
@@ -120,17 +146,33 @@ export default class QueryResults extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    backgroundColor: "#F5FCFF"
+    justifyContent: "center"
   },
   TrainTimeDataList: {
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     flexDirection: "row",
-    padding: 10,
-    borderBottomWidth: 1
+    borderBottomWidth: 0.5,
+    backgroundColor: "rgb(139,205,239)"
   },
   TrainTimeDataListItem: {
+    width: "30%",
     justifyContent: "center",
-    alignItems: "center"
+    margin: 10
+  },
+  TrainTimeDataListItemText: {
+    margin: 3,
+    flexWrap: "wrap"
+  },
+  ButtonStyle: {
+    width: 50,
+    height: 30,
+    margin: 5,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgb(194,223,239)"
+  },
+  TextStyle: {
+    color: "#222222"
   }
 });
