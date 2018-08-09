@@ -70,10 +70,11 @@ export default class HomePage extends Component {
       pickerTitleText: "",
       pickerToolBarFontSize: 18,
       pickerFontSize: 18,
-      pickerFontColor: [255, 255, 255, 255],
-      pickerConfirmBtnColor: [255, 255, 255, 255],
-      pickerCancelBtnColor: [255, 255, 255, 255],
-      pickerToolBarBg: [40, 44, 52, 255],
+      pickerFontColor: [195, 223, 238, 100],
+      pickerConfirmBtnColor: [195, 223, 238, 100],
+      pickerCancelBtnColor: [195, 223, 238, 100],
+      pickerTitleColor: [40, 44, 52, 5],
+      pickerToolBarBg: [40, 44, 52, 5],
       pickerBg: [40, 44, 52, 5],
       onPickerConfirm: data => {
         switch (SinceAndAfter) {
@@ -162,7 +163,10 @@ export default class HomePage extends Component {
       RequestUrl,
       RequestUrl_Price,
       PointOfDeparture: this.state.PointOfDeparture,
-      ArrivalPoint: this.state.ArrivalPoint
+      PointOfDepartureCode: this.state.PointOfDepartureCode,
+      ArrivalPoint: this.state.ArrivalPoint,
+      ArrivalPointCode: this.state.ArrivalPointCode,
+      QueryDates: this.state.QueryDates
     });
   }
 
@@ -197,7 +201,7 @@ export default class HomePage extends Component {
         <View style={{ flexDirection: "row", marginBottom: 20 }}>
           <Button
             ButtonText={this.state.PointOfDeparture + "站"}
-            TextStyle={styles.TextStyle}
+            TextStyle={[styles.TextStyle, { fontSize: 20 }]}
             ButtonStyle={styles.StationSelectionStyle}
             onPress={() => {
               this.showPickerFromStation("PointOfDeparture");
@@ -212,7 +216,7 @@ export default class HomePage extends Component {
           />
           <Button
             ButtonText={this.state.ArrivalPoint + "站"}
-            TextStyle={styles.TextStyle}
+            TextStyle={[styles.TextStyle, { fontSize: 20 }]}
             ButtonStyle={styles.StationSelectionStyle}
             onPress={() => {
               this.showPickerFromStation("ArrivalPoint");
@@ -223,7 +227,7 @@ export default class HomePage extends Component {
           <Button
             ButtonIcon={<Icon name="calendar" size={20} color="rgb(255,255,255)" />}
             ButtonText={" " + this.state.QueryDates}
-            TextStyle={styles.TimeSelectionTextStyle}
+            TextStyle={[styles.TextStyle, { fontSize: 17 }]}
             ButtonStyle={styles.TimeSelectionStyle}
             onPress={() => {
               Picker.hide();
@@ -233,7 +237,7 @@ export default class HomePage extends Component {
           <Button
             ButtonIcon={<Icon name="clock" size={20} color="rgb(255,255,255)" />}
             ButtonText={" " + this.state.QueryHours + ":" + this.state.QueryMinutes + " 出發"}
-            TextStyle={styles.TimeSelectionTextStyle}
+            TextStyle={[styles.TextStyle, { fontSize: 17 }]}
             ButtonStyle={styles.TimeSelectionStyle}
             onPress={() => {
               Picker.hide();
@@ -243,7 +247,7 @@ export default class HomePage extends Component {
         </View>
         <Button
           ButtonText={"查詢"}
-          TextStyle={styles.TextStyle}
+          TextStyle={[styles.TextStyle, { fontSize: 20 }]}
           ButtonStyle={styles.TrainSearchStyle}
           onPress={() => {
             Picker.hide();
@@ -290,11 +294,11 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(57,152,137)"
-  },
-  TimeSelectionTextStyle: {
-    color: "rgb(255,255,255)",
-    fontSize: 17
+    backgroundColor: "rgb(57,152,137)",
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    shadowColor: "rgb(57,152,137)",
+    shadowOffset: { height: 1, width: 1 }
   },
   TrainSearchStyle: {
     width: "60%",
@@ -303,7 +307,12 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "rgb(255,255,255)",
+    backgroundColor: "rgb(40,44,52)",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    shadowColor: "#aaa",
+    shadowOffset: { height: 2, width: 2 }
   }
 });

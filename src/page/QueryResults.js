@@ -1,19 +1,18 @@
 import React, { Component } from "react";
-import { ActivityIndicator, FlatList, Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Icon from "react-native-vector-icons/Feather";
-
 import axios from "axios";
-import jsSHA from "jssha";
 
 import Button from "../util/Button";
-import API from "../API/API";
+import getAuthorizationHeader from "../API/API";
 
 export default class QueryResults extends Component {
   constructor(props) {
     super(props);
     this.state = {
       shouldRenderView: false,
+      notInformation: true,
       RequestData: [],
       RequestPrice: []
     };
@@ -21,53 +20,40 @@ export default class QueryResults extends Component {
 
   static navigationOptions = ({ navigation }) => ({
     headerTitle: (
-      <Text style={{ fontSize: 16, color: "#ffffff" }}>
+      <Text style={{ fontSize: 16, color: "rgb(255,255,255)" }}>
         {navigation.state.params.PointOfDeparture}
-        <Icon name="chevron-right" size={16} color="#ffffff" />
+        <Icon name="chevron-right" size={16} color="rgb(255,255,255)" />
         {navigation.state.params.ArrivalPoint}
       </Text>
-    ),
-    headerTintColor: "#ffffff",
-    headerStyle: {
-      backgroundColor: "rgb(40,44,52)"
-    }
+    )
   });
 
   componentDidMount() {
-    this.RequestTrainTimeData();
+    this.RequestTrainTime();
   }
 
-  getAuthorizationHeader() {
-    const AppID = API.AppID;
-    const AppKey = API.AppKey;
-
-    const GMTString = new Date().toGMTString();
-    const ShaObj = new jsSHA("SHA-1", "TEXT");
-    ShaObj.setHMACKey(AppKey, "TEXT");
-    ShaObj.update("x-date: " + GMTString);
-    const HMAC = ShaObj.getHMAC("B64");
-    const Authorization = 'hmac username="' + AppID + '", algorithm="hmac-sha1", headers="x-date", signature="' + HMAC + '"';
-
-    return { Authorization: Authorization, "X-Date": GMTString };
-  }
-
-  async RequestTrainTimeData() {
+  async RequestTrainTime() {
     const { params } = this.props.navigation.state;
     try {
-      const RequestTrainTimeData = await axios.get(params.RequestUrl, { headers: this.getAuthorizationHeader() });
+      const RequestTrainTimeData = await axios.get(params.RequestUrl, { headers: getAuthorizationHeader() });
       if (RequestTrainTimeData.data.length > 0) {
         this.setState({
           RequestData: RequestTrainTimeData.data,
           shouldRenderView: true
         });
+      } else {
+        this.setState({ notInformation: false });
       }
     } catch (error) {}
+  }
 
-    // try {
-    //   const RequestTrainPriceData = await axios.get(params.RequestUrl_Price, { headers: this.getAuthorizationHeader() });
-    //   this.setState({ RequestPrice: RequestTrainPriceData.data[0].Fares });
-    //   console.log(RequestTrainPriceData.data[0].Fares);
-    // } catch (error) {}
+  async RequestPrice() {
+    const { params } = this.props.navigation.state;
+    try {
+      const RequestTrainPriceData = await axios.get(params.RequestUrl_Price, { headers: getAuthorizationHeader() });
+      this.setState({ RequestPrice: RequestTrainPriceData.data[0].Fares });
+      console.log(RequestTrainPriceData.data[0].Fares);
+    } catch (error) {}
   }
 
   TimeDifferenceCalculation(OriginStopTime, DestinationStopTime) {
@@ -102,8 +88,17 @@ export default class QueryResults extends Component {
             keyExtractor={(item, index) => index.toString()}
             initialNumToRender={10}
             renderItem={({ item }) => {
+              const { params } = this.props.navigation.state;
               return (
-                <View style={styles.TrainTimeDataList}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.props.navigation.navigate("LiveBoardStation", {
+                      PointOfDepartureCode: params.PointOfDepartureCode,
+                      TrainNo: item.DailyTrainInfo.TrainNo,
+                      QueryDates: params.QueryDates
+                    });
+                  }}
+                  style={styles.TrainTimeDataList}>
                   <View style={styles.TrainTimeDataListItem}>
                     {/* 車次 山海線 */}
                     <Text style={styles.TrainTimeDataListItemText}>
@@ -114,18 +109,19 @@ export default class QueryResults extends Component {
                     <Text style={styles.TrainTimeDataListItemText}>{item.DailyTrainInfo.TrainTypeName.Zh_tw}</Text>
                     {/* 起點站及終點站 */}
                     <Text style={styles.TrainTimeDataListItemText}>
-                      {item.DailyTrainInfo.StartingStationName.Zh_tw} {<Icon name="chevron-right" size={15} color="#222" />}{" "}
+                      {item.DailyTrainInfo.StartingStationName.Zh_tw}{" "}
+                      {<Icon name="chevron-right" size={15} color="rgb(255,255,255)" />}{" "}
                       {item.DailyTrainInfo.EndingStationName.Zh_tw}
                     </Text>
                   </View>
                   <View style={[styles.TrainTimeDataListItem, { alignItems: "center" }]}>
                     {/* 到達時間及行駛時間 */}
                     <Text style={styles.TrainTimeDataListItemText}>
-                      {item.OriginStopTime.ArrivalTime} {<Icon name="chevron-right" size={15} color="#222" />}{" "}
+                      {item.OriginStopTime.DepartureTime} {<Icon name="chevron-right" size={15} color="rgb(255,255,255)" />}{" "}
                       {item.DestinationStopTime.ArrivalTime}
                     </Text>
                     <Text style={styles.TrainTimeDataListItemText}>
-                      {this.TimeDifferenceCalculation(item.OriginStopTime.ArrivalTime, item.DestinationStopTime.ArrivalTime)}
+                      {this.TimeDifferenceCalculation(item.OriginStopTime.DepartureTime, item.DestinationStopTime.ArrivalTime)}
                     </Text>
                   </View>
                   <View style={[styles.TrainTimeDataListItem, { alignItems: "center" }]}>
@@ -133,15 +129,32 @@ export default class QueryResults extends Component {
                       ButtonText={"訂票"}
                       TextStyle={styles.TextStyle}
                       ButtonStyle={styles.ButtonStyle}
-                      onPress={() => {}}
+                      onPress={() => {
+                        this.props.navigation.navigate("OnlineTickets", {
+                          OnlineTickets_PointOfDeparture: params.PointOfDeparture,
+                          OnlineTickets_PointOfDepartureCode: params.PointOfDepartureCode,
+                          OnlineTickets_ArrivalPoint: params.ArrivalPoint,
+                          OnlineTickets_ArrivalPointCode: params.ArrivalPointCode,
+                          OnlineTickets_TrainNo: item.DailyTrainInfo.TrainNo
+                        });
+                      }}
                     />
                   </View>
-                </View>
+                </TouchableOpacity>
               );
             }}
           />
         ) : (
-          <ActivityIndicator size="large" color="#2894ff" />
+          <View style={[styles.container, { alignItems: "center" }]}>
+            {this.state.notInformation ? (
+              <ActivityIndicator size="large" color="rgb(255,255,255)" />
+            ) : (
+              <View style={[styles.container, { alignItems: "center" }]}>
+                <Icon name="alert-circle" size={40} color="rgb(255,255,255)" />
+                <Text style={[styles.TextStyle, { fontSize: 20, marginTop: 10 }]}>查無班次資訊</Text>
+              </View>
+            )}
+          </View>
         )}
       </View>
     );
@@ -151,13 +164,15 @@ export default class QueryResults extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center"
+    justifyContent: "center",
+    backgroundColor: "rgb(40,44,52)"
   },
   TrainTimeDataList: {
     justifyContent: "space-between",
     flexDirection: "row",
     borderBottomWidth: 0.5,
-    backgroundColor: "rgb(139,205,239)"
+    borderColor: "rgb(255,255,255)",
+    backgroundColor: "rgb(40,44,52)"
   },
   TrainTimeDataListItem: {
     width: "30%",
@@ -165,6 +180,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   TrainTimeDataListItemText: {
+    color: "rgb(255,255,255)",
     margin: 3,
     flexWrap: "wrap"
   },
@@ -175,9 +191,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(194,223,239)"
+    backgroundColor: "rgba(255,255,255,0.5)"
   },
   TextStyle: {
-    color: "#222222"
+    color: "rgb(255,255,255)"
   }
 });

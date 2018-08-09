@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { ActivityIndicator, FlatList, Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Platform, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import Icon from "react-native-vector-icons/Feather";
 
-export default class OnlineTickets extends Component {
+export default class AboutUS extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -20,8 +20,7 @@ export default class OnlineTickets extends Component {
     return (
       <View style={styles.container}>
         {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : null}
-
-        <ActivityIndicator size="large" color="#2894ff" />
+        <Text style={styles.TextStyle}>關於我們</Text>
       </View>
     );
   }
@@ -31,6 +30,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "rgb(40,44,52)"
+  },
+  TextStyle: {
+    color: "rgb(255,255,255)"
   }
 });
