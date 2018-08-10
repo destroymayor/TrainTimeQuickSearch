@@ -12,7 +12,8 @@ export default class LiveBoardStation extends Component {
     this.state = {
       shouldRenderView: false,
       LiveBoardStation: [],
-      StationTimetable: []
+      StationTimetable: [],
+      ItemAutoPosition: 0
     };
   }
 
@@ -26,7 +27,13 @@ export default class LiveBoardStation extends Component {
   componentDidMount() {
     axios.all([this.RequestLiveBoardStation(), this.RequestStationTimetable()]).then(() => {
       this.setState({ shouldRenderView: true });
+      this.scrollToIndexAutoTimer = setTimeout(() => {
+        this.flatListRef.scrollToIndex({ animated: true, index: this.state.ItemAutoPosition });
+      }, 1000);
     });
+  }
+  componentWillUnmount() {
+    this.scrollToIndexAutoTimer && clearTimeout(this.scrollToIndexAutoTimer);
   }
 
   // 取得列車即時準點/延誤時間資料
@@ -34,7 +41,6 @@ export default class LiveBoardStation extends Component {
     const { params } = this.props.navigation.state;
     const RequestUrl_LiveBoardStation =
       "http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/LiveTrainDelay?$filter=TrainNo%20eq%20'" + params.TrainNo + "'&$format=JSON";
-    console.log(params);
     try {
       const RequestLiveBoardData = await axios.get(RequestUrl_LiveBoardStation, {
         headers: getAuthorizationHeader()
@@ -60,6 +66,15 @@ export default class LiveBoardStation extends Component {
       const RequestStationTimetableData = await axios.get(RequestUrl_StationTimetableData, {
         headers: getAuthorizationHeader()
       });
+      //item自動定位
+      RequestStationTimetableData.data[0].StopTimes.map(item => {
+        if (item.StationName.Zh_tw === params.PointOfDeparture.replace(new RegExp("【|】", "g"), "")) {
+          this.setState({
+            ItemAutoPosition: item.StopSequence - 1
+          });
+        }
+      });
+
       this.setState({ StationTimetable: RequestStationTimetableData.data[0].StopTimes });
       console.log("取得指定[日期],[車次]的時刻表資料", RequestStationTimetableData.data[0].StopTimes);
     } catch (error) {}

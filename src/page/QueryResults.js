@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { ActivityIndicator, FlatList, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import Icon from "react-native-vector-icons/Feather";
+import FeatherIcon from "react-native-vector-icons/Feather";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import axios from "axios";
 
 import Button from "../util/Button";
@@ -22,7 +23,7 @@ export default class QueryResults extends Component {
     headerTitle: (
       <Text style={{ fontSize: 16, color: "rgb(255,255,255)" }}>
         {navigation.state.params.PointOfDeparture}
-        <Icon name="chevron-right" size={16} color="rgb(255,255,255)" />
+        <FeatherIcon name="chevron-right" size={16} color="rgb(255,255,255)" />
         {navigation.state.params.ArrivalPoint}
       </Text>
     )
@@ -89,6 +90,22 @@ export default class QueryResults extends Component {
             initialNumToRender={10}
             renderItem={({ item }) => {
               const { params } = this.props.navigation.state;
+              //判斷車種 改變icon顏色
+              const TrainTypeColor = item.DailyTrainInfo.TrainTypeName.Zh_tw.includes("區間")
+                ? "rgb(10,150,200)"
+                : item.DailyTrainInfo.TrainTypeName.Zh_tw.includes("莒光")
+                  ? "rgb(200,100,10)"
+                  : item.DailyTrainInfo.TrainTypeName.Zh_tw.includes("自強")
+                    ? "rgb(250,100,10)"
+                    : "rgb(255,255,255)";
+              //判斷車種名稱
+              const TrainTypeNames = item.DailyTrainInfo.TrainTypeName.Zh_tw.includes("區間")
+                ? "區間車"
+                : item.DailyTrainInfo.TrainTypeName.Zh_tw.includes("莒光")
+                  ? "莒光號"
+                  : item.DailyTrainInfo.TrainTypeName.Zh_tw.includes("自強")
+                    ? "自強號"
+                    : item.DailyTrainInfo.TrainTypeName.Zh_tw;
               return (
                 <TouchableOpacity
                   onPress={() => {
@@ -108,25 +125,30 @@ export default class QueryResults extends Component {
                       {item.DailyTrainInfo.TripLine === 1 ? " - 山線" : item.DailyTrainInfo.TripLine === 2 ? " - 海線" : ""}
                     </Text>
                     {/* 火車類型 */}
-                    <Text style={styles.TrainTimeDataListItemText}>{item.DailyTrainInfo.TrainTypeName.Zh_tw}</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <MaterialIcons name="train" size={35} color={TrainTypeColor} />
+                      <Text style={[styles.TrainTimeDataListItemText, { marginTop: 11 }]}>{TrainTypeNames}</Text>
+                    </View>
                     {/* 起點站及終點站 */}
                     <Text style={styles.TrainTimeDataListItemText}>
                       {item.DailyTrainInfo.StartingStationName.Zh_tw}{" "}
-                      {<Icon name="chevron-right" size={15} color="rgb(255,255,255)" />}{" "}
+                      {<FeatherIcon name="chevron-right" size={15} color="rgb(255,255,255)" />}{" "}
                       {item.DailyTrainInfo.EndingStationName.Zh_tw}
                     </Text>
                   </View>
                   <View style={[styles.TrainTimeDataListItem, { alignItems: "center" }]}>
                     {/* 到達時間及行駛時間 */}
                     <Text style={styles.TrainTimeDataListItemText}>
-                      {item.OriginStopTime.DepartureTime} {<Icon name="chevron-right" size={15} color="rgb(255,255,255)" />}{" "}
+                      {item.OriginStopTime.DepartureTime}{" "}
+                      {<FeatherIcon name="chevron-right" size={15} color="rgb(255,255,255)" />}{" "}
                       {item.DestinationStopTime.ArrivalTime}
                     </Text>
+                    <Text style={styles.TrainTimeDataListItemText}>行駛時間</Text>
                     <Text style={styles.TrainTimeDataListItemText}>
                       {this.TimeDifferenceCalculation(item.OriginStopTime.DepartureTime, item.DestinationStopTime.ArrivalTime)}
                     </Text>
                   </View>
-                  <View style={[styles.TrainTimeDataListItem, { alignItems: "center" }]}>
+                  <View style={[styles.TrainTimeDataListItem, { flexDirection: "row", alignItems: "center" }]}>
                     <Button
                       ButtonText={"訂票"}
                       TextStyle={styles.TextStyle}
@@ -141,6 +163,7 @@ export default class QueryResults extends Component {
                         });
                       }}
                     />
+                    <FeatherIcon name="chevron-right" size={16} color="rgb(255,255,255)" />
                   </View>
                 </TouchableOpacity>
               );
@@ -152,7 +175,7 @@ export default class QueryResults extends Component {
               <ActivityIndicator size="large" color="rgb(255,255,255)" />
             ) : (
               <View style={[styles.container, { alignItems: "center" }]}>
-                <Icon name="alert-circle" size={40} color="rgb(255,255,255)" />
+                <FeatherIcon name="alert-circle" size={40} color="rgb(255,255,255)" />
                 <Text style={[styles.TextStyle, { fontSize: 20, marginTop: 10 }]}>查無班次資訊</Text>
               </View>
             )}
@@ -184,7 +207,8 @@ const styles = StyleSheet.create({
   TrainTimeDataListItemText: {
     color: "rgb(255,255,255)",
     margin: 3,
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    fontSize: 15
   },
   ButtonStyle: {
     width: 50,
