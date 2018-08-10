@@ -129,7 +129,9 @@ export default class LiveBoardStation extends Component {
                   <View style={[styles.LiveBoardStationListItem, { width: "15%" }]}>
                     <View style={styles.ArrivalIconList}>
                       <View style={[styles.ArrivalIconListItem, { backgroundColor: InstantArrivalBoolean }]} />
-                      <View style={styles.ArrivalIconListItemRectangle} />
+                      {item.StopSequence === this.state.StationTimetable.length ? null : (
+                        <View style={styles.ArrivalIconListItemRectangle} />
+                      )}
                     </View>
                   </View>
                   <View style={[styles.LiveBoardStationListItem, { width: "20%" }]}>

@@ -10,7 +10,8 @@
     "android:clean": "cd android && ./gradlew clean",
     "run-android": "react-native run-android",
     "run-ios": "react-native run-ios",
-    "log-ios": "react-native log-ios"
+    "log-ios": "react-native log-ios",
+    "push": "git add . && git ci -m . && git push -u origin master"
   },
   "dependencies": {
     "axios": "^0.18.0",
