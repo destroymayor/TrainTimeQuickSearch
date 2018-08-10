@@ -93,7 +93,9 @@ export default class QueryResults extends Component {
                 <TouchableOpacity
                   onPress={() => {
                     this.props.navigation.navigate("LiveBoardStation", {
+                      PointOfDeparture: params.PointOfDeparture,
                       PointOfDepartureCode: params.PointOfDepartureCode,
+                      ArrivalPoint: params.ArrivalPoint,
                       TrainNo: item.DailyTrainInfo.TrainNo,
                       QueryDates: params.QueryDates
                     });

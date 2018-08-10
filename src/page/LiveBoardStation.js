@@ -11,7 +11,7 @@ export default class LiveBoardStation extends Component {
     super(props);
     this.state = {
       shouldRenderView: false,
-      LiveBoardStationData: [],
+      LiveBoardStation: [],
       StationTimetable: []
     };
   }
@@ -33,14 +33,17 @@ export default class LiveBoardStation extends Component {
   async RequestLiveBoardStation() {
     const { params } = this.props.navigation.state;
     const RequestUrl_LiveBoardStation =
-      "http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/LiveBoard/Station/" + params.PointOfDepartureCode + "?$format=JSON";
+      "http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/LiveTrainDelay?$filter=TrainNo%20eq%20'" + params.TrainNo + "'&$format=JSON";
+    console.log(params);
     try {
       const RequestLiveBoardData = await axios.get(RequestUrl_LiveBoardStation, {
         headers: getAuthorizationHeader()
       });
       this.setState({ LiveBoardStation: RequestLiveBoardData.data });
       console.log("取得列車即時準點/延誤時間資料", RequestLiveBoardData.data);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   //取得指定[日期],[車次]的時刻表資料
@@ -69,25 +72,59 @@ export default class LiveBoardStation extends Component {
         {this.state.shouldRenderView ? (
           <FlatList
             style={{ paddingTop: 20 }}
+            ref={ref => {
+              this.flatListRef = ref;
+            }}
             data={this.state.StationTimetable}
             keyExtractor={(item, index) => index.toString()}
             initialNumToRender={10}
             renderItem={({ item }) => {
+              const { params } = this.props.navigation.state;
+              //列車即時動態 icon標記
+              let InstantArrivalBoolean =
+                item.StationName.Zh_tw === params.PointOfDeparture.replace(new RegExp("【|】", "g"), "")
+                  ? "rgb(10,150,255)"
+                  : item.StationName.Zh_tw === params.ArrivalPoint.replace(new RegExp("【|】", "g"), "")
+                    ? "rgb(10,150,255)"
+                    : "rgb(40,44,52)";
+
+              let DelayTime = "";
+              if (this.state.LiveBoardStation.length > 0) {
+                // Icon顏色標記
+                InstantArrivalBoolean =
+                  this.state.LiveBoardStation[0].StationName.Zh_tw === item.StationName.Zh_tw
+                    ? "rgb(200,100,10)"
+                    : InstantArrivalBoolean;
+
+                //判斷準點或延誤
+                if (this.state.LiveBoardStation[0].StationName.Zh_tw === item.StationName.Zh_tw) {
+                  DelayTime =
+                    this.state.LiveBoardStation[0].DelayTime == 0
+                      ? "準點"
+                      : this.state.LiveBoardStation[0].DelayTime > 0
+                        ? "延誤" + this.state.LiveBoardStation[0].DelayTime + "分"
+                        : null;
+                }
+              }
               return (
                 <View style={styles.LiveBoardStationList}>
                   <View style={[styles.LiveBoardStationListItem, { width: "25%" }]}>
-                    <Text style={[styles.TextStyle, { fontSize: 20, marginBottom: 28 }]}>{item.StationName.Zh_tw}</Text>
+                    <Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>{item.StationName.Zh_tw}</Text>
                   </View>
-                  <View style={[styles.LiveBoardStationListItem, { width: "10%" }]}>
+                  <View style={[styles.LiveBoardStationListItem, { width: "15%" }]}>
                     <View style={styles.ArrivalIconList}>
-                      <View style={styles.ArrivalIconListItem} />
+                      <View style={[styles.ArrivalIconListItem, { backgroundColor: InstantArrivalBoolean }]} />
                       <View style={styles.ArrivalIconListItemRectangle} />
                     </View>
                   </View>
-                  <View style={[styles.LiveBoardStationListItem, { width: "65%" }]}>
-                    <Text style={[styles.TextStyle, { fontSize: 17, marginBottom: 28 }]}>
-                      {item.ArrivalTime}
-                      到站 / {item.DepartureTime}
+                  <View style={[styles.LiveBoardStationListItem, { width: "20%" }]}>
+                    <Text Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
+                      {DelayTime}
+                    </Text>
+                  </View>
+                  <View style={[styles.LiveBoardStationListItem, { width: "40%" }]}>
+                    <Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
+                      {item.DepartureTime}
                       發車
                     </Text>
                   </View>
