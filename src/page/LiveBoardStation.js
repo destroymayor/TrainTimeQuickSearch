@@ -27,9 +27,6 @@ export default class LiveBoardStation extends Component {
   componentDidMount() {
     axios.all([this.RequestLiveBoardStation(), this.RequestStationTimetable()]).then(() => {
       this.setState({ shouldRenderView: true });
-      this.scrollToIndexAutoTimer = setTimeout(() => {
-        this.flatListRef.scrollToIndex({ animated: true, index: this.state.ItemAutoPosition });
-      }, 1000);
     });
   }
   componentWillUnmount() {
@@ -87,12 +84,10 @@ export default class LiveBoardStation extends Component {
         {this.state.shouldRenderView ? (
           <FlatList
             style={{ paddingTop: 20 }}
-            ref={ref => {
-              this.flatListRef = ref;
-            }}
             data={this.state.StationTimetable}
             keyExtractor={(item, index) => index.toString()}
-            initialNumToRender={10}
+            initialScrollIndex={this.state.ItemAutoPosition}
+            getItemLayout={(data, index) => ({ length: 1, offset: 70 * index, index })}
             renderItem={({ item }) => {
               const { params } = this.props.navigation.state;
               //列車即時動態 icon標記
