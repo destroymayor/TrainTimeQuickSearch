@@ -149,21 +149,7 @@ export default class QueryResults extends Component {
                     </Text>
                   </View>
                   <View style={[styles.TrainTimeDataListItem, { flexDirection: "row", alignItems: "center" }]}>
-                    <Button
-                      ButtonText={"訂票"}
-                      TextStyle={styles.TextStyle}
-                      ButtonStyle={styles.ButtonStyle}
-                      onPress={() => {
-                        this.props.navigation.navigate("OnlineTickets", {
-                          OnlineTickets_PointOfDeparture: params.PointOfDeparture,
-                          OnlineTickets_PointOfDepartureCode: params.PointOfDepartureCode,
-                          OnlineTickets_ArrivalPoint: params.ArrivalPoint,
-                          OnlineTickets_ArrivalPointCode: params.ArrivalPointCode,
-                          OnlineTickets_TrainNo: item.DailyTrainInfo.TrainNo
-                        });
-                      }}
-                    />
-                    <FeatherIcon name="chevron-right" size={16} color="rgb(255,255,255)" />
+                    <FeatherIcon name="chevron-right" size={25} color="rgb(255,255,255)" />
                   </View>
                 </TouchableOpacity>
               );

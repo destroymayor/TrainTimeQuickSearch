@@ -7,13 +7,11 @@ import Icon from "react-native-vector-icons/Feather";
 import HomePage from "./page/HomePage";
 import QueryResult from "./page/QueryResults";
 import LiveBoardStation from "./page/LiveBoardStation";
-import OnlineTickets from "./page/OnlineTickets";
 import AboutUs from "./page/AboutUs";
 
 const Index = createBottomTabNavigator(
   {
     查詢: { screen: HomePage },
-    訂票: { screen: OnlineTickets },
     關於: { screen: AboutUs }
   },
   {
@@ -51,7 +49,6 @@ const Setup = createStackNavigator(
     HomePage: { screen: Index, navigationOptions: { header: null } },
     QueryResult: { screen: QueryResult },
     LiveBoardStation: { screen: LiveBoardStation },
-    OnlineTickets: { screen: OnlineTickets },
     AboutUs: { screen: AboutUs }
   },
   {

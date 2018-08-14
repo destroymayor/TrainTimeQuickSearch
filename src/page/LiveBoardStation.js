@@ -130,7 +130,7 @@ export default class LiveBoardStation extends Component {
                     </View>
                   </View>
                   <View style={[styles.LiveBoardStationListItem, { width: "20%" }]}>
-                    <Text Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
+                  <Text Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
                       {DelayTime}
                     </Text>
                   </View>
