@@ -5,8 +5,7 @@ import FeatherIcon from "react-native-vector-icons/Feather";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import axios from "axios";
 
-import Button from "../util/Button";
-import getAuthorizationHeader from "../API/API";
+import getAuthorizationHeader from "../../API";
 
 export default class QueryResults extends Component {
   constructor(props) {
@@ -195,15 +194,6 @@ const styles = StyleSheet.create({
     margin: 3,
     flexWrap: "wrap",
     fontSize: 15
-  },
-  ButtonStyle: {
-    width: 50,
-    height: 30,
-    margin: 5,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.5)"
   },
   TextStyle: {
     color: "rgb(255,255,255)"

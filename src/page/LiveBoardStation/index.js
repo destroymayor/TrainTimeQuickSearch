@@ -4,7 +4,7 @@ import { ActivityIndicator, FlatList, Platform, StatusBar, StyleSheet, Text, Vie
 import Icon from "react-native-vector-icons/Feather";
 import axios from "axios";
 
-import getAuthorizationHeader from "../API/API";
+import getAuthorizationHeader from "../../API";
 
 export default class LiveBoardStation extends Component {
   constructor(props) {
@@ -87,7 +87,7 @@ export default class LiveBoardStation extends Component {
             data={this.state.StationTimetable}
             keyExtractor={(item, index) => index.toString()}
             initialScrollIndex={this.state.ItemAutoPosition}
-            getItemLayout={(data, index) => ({ length: 1, offset: 70 * index, index })}
+            getItemLayout={(data, index) => ({ length: 1, offset: 65 * index, index })}
             renderItem={({ item }) => {
               const { params } = this.props.navigation.state;
               //列車即時動態 icon標記
@@ -130,7 +130,7 @@ export default class LiveBoardStation extends Component {
                     </View>
                   </View>
                   <View style={[styles.LiveBoardStationListItem, { width: "20%" }]}>
-                  <Text Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
+                    <Text Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
                       {DelayTime}
                     </Text>
                   </View>

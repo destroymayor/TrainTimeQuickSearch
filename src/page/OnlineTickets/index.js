@@ -4,7 +4,7 @@ import { TextInput, Platform, StatusBar, StyleSheet, Text, View } from "react-na
 import Icon from "react-native-vector-icons/Feather";
 import Picker from "react-native-picker";
 
-import Button from "../util/Button";
+import Button from "../../util/Button";
 
 export default class OnlineTickets extends Component {
   constructor(props) {

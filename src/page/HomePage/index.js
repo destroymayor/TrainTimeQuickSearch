@@ -6,9 +6,9 @@ import Picker from "react-native-picker";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import DateTimePickerTime from "react-native-modal-datetime-picker";
 
-import requestGeolocation from "../util/RequestGeolocation";
-import Button from "../util/Button";
-import StationCode from "../data/StationCode";
+import requestGeolocation from "../../util/RequestGeolocation";
+import Button from "../../util/Button";
+import StationCode from "../../data/StationCode";
 import { Object } from "core-js";
 
 export default class HomePage extends Component {
