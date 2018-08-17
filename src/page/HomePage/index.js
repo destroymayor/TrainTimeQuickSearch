@@ -32,7 +32,8 @@ export default class HomePage extends Component {
       PointOfDeparture: "福隆",
       PointOfDepartureCode: "1810",
       ArrivalPoint: "牡丹",
-      ArrivalPointCode: "1807"
+      ArrivalPointCode: "1807",
+      ArrivalPointState: false
     };
   }
 
@@ -88,7 +89,8 @@ export default class HomePage extends Component {
           case "ArrivalPoint":
             this.setState({
               ArrivalPoint: data[1],
-              ArrivalPointCode: data[2]
+              ArrivalPointCode: data[2],
+              ArrivalPointState: true
             });
             break;
         }
@@ -207,13 +209,20 @@ export default class HomePage extends Component {
               this.showPickerFromStation("PointOfDeparture");
             }}
           />
-          <Button
-            ButtonText={<Icon name="chevron-right" size={35} color="rgb(255,255,255)" />}
-            ButtonStyle={styles.IconStyle}
-            onPress={() => {
-              this.SiteInterchange();
-            }}
-          />
+          {!this.state.ArrivalPointState ? (
+            <Button
+              ButtonText={<Icon name="chevron-right" size={35} color="rgb(255,255,255)" />}
+              ButtonStyle={styles.IconStyle}
+            />
+          ) : (
+            <Button
+              ButtonText={<Icon name="refresh-cw" size={30} color="rgb(255,255,255)" />}
+              ButtonStyle={styles.IconStyle}
+              onPress={() => {
+                this.SiteInterchange();
+              }}
+            />
+          )}
           <Button
             ButtonText={this.state.ArrivalPoint + "站"}
             TextStyle={[styles.TextStyle, { fontSize: 20 }]}
