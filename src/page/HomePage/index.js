@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 
-import Icon from "react-native-vector-icons/Feather";
+import FeatherIcon from "react-native-vector-icons/Feather";
+import EntypoIcon from "react-native-vector-icons/Entypo";
+
 import Picker from "react-native-picker";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import DateTimePickerTime from "react-native-modal-datetime-picker";
@@ -9,6 +11,7 @@ import DateTimePickerTime from "react-native-modal-datetime-picker";
 import requestGeolocation from "../../util/RequestGeolocation";
 import Button from "../../util/Button";
 import StationCode from "../../data/StationCode";
+import Storage from "../../data/Storage/ChooseHistory";
 import { Object } from "core-js";
 
 export default class HomePage extends Component {
@@ -32,13 +35,21 @@ export default class HomePage extends Component {
       PointOfDeparture: "福隆",
       PointOfDepartureCode: "1810",
       ArrivalPoint: "牡丹",
-      ArrivalPointCode: "1807",
-      ArrivalPointState: false
+      ArrivalPointCode: "1807"
     };
   }
 
-  componentDidMount() {
-    this.autoGeolocation();
+  componentWillMount() {
+    Storage.Load("PointOfDeparture")
+      .then(ret => {
+        this.setState({ PointOfDeparture: ret.name, PointOfDepartureCode: ret.code });
+      })
+      .catch(err => {});
+    Storage.Load("ArrivalPoint")
+      .then(ret => {
+        this.setState({ ArrivalPoint: ret.name, ArrivalPointCode: ret.code });
+      })
+      .catch(err => {});
   }
 
   autoGeolocation() {
@@ -85,12 +96,21 @@ export default class HomePage extends Component {
               PointOfDeparture: data[1],
               PointOfDepartureCode: data[2]
             });
+            Storage.Save({
+              key: "PointOfDeparture",
+              name: data[1],
+              code: data[2]
+            });
             break;
           case "ArrivalPoint":
             this.setState({
               ArrivalPoint: data[1],
-              ArrivalPointCode: data[2],
-              ArrivalPointState: true
+              ArrivalPointCode: data[2]
+            });
+            Storage.Save({
+              key: "ArrivalPoint",
+              name: data[1],
+              code: data[2]
             });
             break;
         }
@@ -209,20 +229,10 @@ export default class HomePage extends Component {
               this.showPickerFromStation("PointOfDeparture");
             }}
           />
-          {!this.state.ArrivalPointState ? (
-            <Button
-              ButtonText={<Icon name="chevron-right" size={35} color="rgb(255,255,255)" />}
-              ButtonStyle={styles.IconStyle}
-            />
-          ) : (
-            <Button
-              ButtonText={<Icon name="refresh-cw" size={30} color="rgb(255,255,255)" />}
-              ButtonStyle={styles.IconStyle}
-              onPress={() => {
-                this.SiteInterchange();
-              }}
-            />
-          )}
+          <Button
+            ButtonText={<FeatherIcon name="chevron-right" size={35} color="rgb(255,255,255)" />}
+            ButtonStyle={styles.IconStyle}
+          />
           <Button
             ButtonText={this.state.ArrivalPoint + "站"}
             TextStyle={[styles.TextStyle, { fontSize: 20 }]}
@@ -232,9 +242,25 @@ export default class HomePage extends Component {
             }}
           />
         </View>
+        <View style={{ flexDirection: "row" }}>
+          <Button
+            ButtonText={<FeatherIcon name="refresh-cw" size={35} color="rgb(255,255,255)" />}
+            ButtonStyle={[styles.IconStyle, { marginRight: 15 }]}
+            onPress={() => {
+              this.SiteInterchange();
+            }}
+          />
+          <Button
+            ButtonText={<EntypoIcon name="location" size={35} color="rgb(255,255,255)" />}
+            ButtonStyle={styles.IconStyle}
+            onPress={() => {
+              this.autoGeolocation();
+            }}
+          />
+        </View>
         <View style={{ flexDirection: "row", marginTop: 20, marginBottom: 10 }}>
           <Button
-            ButtonIcon={<Icon name="calendar" size={20} color="rgb(255,255,255)" />}
+            ButtonIcon={<FeatherIcon name="calendar" size={20} color="rgb(255,255,255)" />}
             ButtonText={" " + this.state.QueryDates}
             TextStyle={[styles.TextStyle, { fontSize: 17 }]}
             ButtonStyle={styles.TimeSelectionStyle}
@@ -244,7 +270,7 @@ export default class HomePage extends Component {
             }}
           />
           <Button
-            ButtonIcon={<Icon name="clock" size={20} color="rgb(255,255,255)" />}
+            ButtonIcon={<FeatherIcon name="clock" size={20} color="rgb(255,255,255)" />}
             ButtonText={" " + this.state.QueryHours + ":" + this.state.QueryMinutes + " 出發"}
             TextStyle={[styles.TextStyle, { fontSize: 17 }]}
             ButtonStyle={styles.TimeSelectionStyle}
