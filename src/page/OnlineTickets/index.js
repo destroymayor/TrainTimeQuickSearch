@@ -15,11 +15,6 @@ export default class OnlineTickets extends Component {
     };
   }
 
-  componentDidMount() {
-    const { params } = this.props.navigation.state;
-    console.log(params);
-  }
-
   showPickerTickets() {
     Picker.init({
       pickerData: [1, 2, 3, 4, 5, 6],

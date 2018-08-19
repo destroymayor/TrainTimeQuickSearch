@@ -199,6 +199,7 @@ export default class HomePage extends Component {
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
           is24Hour={true}
+          locale={"zh-tw"}
           date={new Date()}
           titleIOS="請選擇日期"
           cancelTextIOS="取消"
@@ -211,6 +212,7 @@ export default class HomePage extends Component {
         <DateTimePickerTime
           isVisible={this.state.isDateTimePickerTimeVisible}
           is24Hour={true}
+          locale={"zh-tw"}
           mode="time"
           date={new Date()}
           titleIOS="請選擇時間"

@@ -17,7 +17,8 @@ export default class LiveBoardStation extends Component {
     };
   }
 
-  static navigationOptions = ({ navigation }) => ({
+  static navigationOptions = () => ({
+    headerTitle: "列車動態",
     headerTintColor: "rgb(255,255,255)",
     headerStyle: {
       backgroundColor: "rgb(40,44,52)"
@@ -28,9 +29,6 @@ export default class LiveBoardStation extends Component {
     axios.all([this.RequestLiveBoardStation(), this.RequestStationTimetable()]).then(() => {
       this.setState({ shouldRenderView: true });
     });
-  }
-  componentWillUnmount() {
-    this.scrollToIndexAutoTimer && clearTimeout(this.scrollToIndexAutoTimer);
   }
 
   // 取得列車即時準點/延誤時間資料
@@ -44,9 +42,7 @@ export default class LiveBoardStation extends Component {
       });
       this.setState({ LiveBoardStation: RequestLiveBoardData.data });
       console.log("取得列車即時準點/延誤時間資料", RequestLiveBoardData.data);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   //取得指定[日期],[車次]的時刻表資料
@@ -87,7 +83,7 @@ export default class LiveBoardStation extends Component {
             data={this.state.StationTimetable}
             keyExtractor={(item, index) => index.toString()}
             initialScrollIndex={this.state.ItemAutoPosition}
-            getItemLayout={(data, index) => ({ length: 1, offset: 65 * index, index })}
+            getItemLayout={(data, index) => ({ length: 1, offset: 70 * index, index })}
             renderItem={({ item }) => {
               const { params } = this.props.navigation.state;
               //列車即時動態 icon標記
@@ -113,13 +109,13 @@ export default class LiveBoardStation extends Component {
                       ? "準點"
                       : this.state.LiveBoardStation[0].DelayTime > 0
                         ? "延誤" + this.state.LiveBoardStation[0].DelayTime + "分"
-                        : null;
+                        : "";
                 }
               }
               return (
                 <View style={styles.LiveBoardStationList}>
                   <View style={[styles.LiveBoardStationListItem, { width: "25%" }]}>
-                    <Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>{item.StationName.Zh_tw}</Text>
+                    <Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 30 }]}>{item.StationName.Zh_tw}</Text>
                   </View>
                   <View style={[styles.LiveBoardStationListItem, { width: "15%" }]}>
                     <View style={styles.ArrivalIconList}>
@@ -130,12 +126,17 @@ export default class LiveBoardStation extends Component {
                     </View>
                   </View>
                   <View style={[styles.LiveBoardStationListItem, { width: "20%" }]}>
-                    <Text Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
+                    <Text
+                      Text
+                      style={[
+                        styles.TextStyle,
+                        { fontSize: 18, marginBottom: 30, color: DelayTime == "準點" ? "rgb(57,152,137)" : "rgb(200,100,10)" }
+                      ]}>
                       {DelayTime}
                     </Text>
                   </View>
                   <View style={[styles.LiveBoardStationListItem, { width: "40%" }]}>
-                    <Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 28 }]}>
+                    <Text style={[styles.TextStyle, { fontSize: 18, marginBottom: 30 }]}>
                       {item.DepartureTime}
                       發車
                     </Text>
@@ -166,8 +167,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   TextStyle: {
-    color: "rgb(255,255,255)",
-    textAlign: "center"
+    color: "rgb(255,255,255)"
   },
   ArrivalIconList: {
     width: 100,
