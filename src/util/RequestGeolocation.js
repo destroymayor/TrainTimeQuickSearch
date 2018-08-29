@@ -35,6 +35,7 @@ const requestGeolocation = () =>
           );
         }
       } catch (err) {
+        reject(error);
         // console.log(err);
       }
     } else {
@@ -53,10 +54,12 @@ const requestGeolocation = () =>
               resolve(responseData.results[0].address_components[3].long_name);
             })
             .catch(error => {
+              reject(error);
               // console.log(error);
             });
         },
         error => {
+          reject(error);
           //console.log(error);
         },
         {

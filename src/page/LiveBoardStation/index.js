@@ -108,7 +108,7 @@ export default class LiveBoardStation extends Component {
                     this.state.LiveBoardStation[0].DelayTime == 0
                       ? "準點"
                       : this.state.LiveBoardStation[0].DelayTime > 0
-                        ? "延誤" + this.state.LiveBoardStation[0].DelayTime + "分"
+                        ? "延誤 " + this.state.LiveBoardStation[0].DelayTime + "分"
                         : "";
                 }
               }
@@ -130,7 +130,7 @@ export default class LiveBoardStation extends Component {
                       Text
                       style={[
                         styles.TextStyle,
-                        { fontSize: 18, marginBottom: 30, color: DelayTime == "準點" ? "rgb(57,152,137)" : "rgb(200,100,10)" }
+                        { fontSize: 18, marginBottom: 30, color: DelayTime == "準點" ? "rgb(50,200,137)" : "rgb(230,100,10)" }
                       ]}>
                       {DelayTime}
                     </Text>
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   ArrivalIconListItemRectangle: {
     width: 20,
     height: 35,
-    backgroundColor: "#fff",
+    backgroundColor: "rgb(255,255,255)",
     position: "absolute",
     bottom: 0
   }

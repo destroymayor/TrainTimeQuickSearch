@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Platform, Linking, StatusBar, StyleSheet, Text, View } from "react-native";
 
 import FeatherIcon from "react-native-vector-icons/Feather";
 
@@ -23,15 +23,30 @@ export default class AboutUS extends Component {
     return (
       <View style={styles.container}>
         {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : null}
-        <Text style={styles.TextStyle}>關於我們</Text>
+        <Button
+          ButtonIcon={<FeatherIcon name="users" size={20} color="rgb(255,255,255)" />}
+          ButtonText={" 關於團隊"}
+          TextStyle={styles.TextStyle}
+          ButtonStyle={styles.TimeSelectionStyle}
+          onPress={() => {}}
+        />
         <Button
           ButtonIcon={<FeatherIcon name="trash-2" size={20} color="rgb(255,255,255)" />}
-          ButtonText={" 清除歷史記錄"}
+          ButtonText={" 清理記錄"}
           TextStyle={styles.TextStyle}
           ButtonStyle={styles.TimeSelectionStyle}
           onPress={() => {
             Storage.Clear("PointOfDeparture");
             Storage.Clear("ArrivalPoint");
+          }}
+        />
+        <Button
+          ButtonIcon={<FeatherIcon name="mail" size={20} color="rgb(255,255,255)" />}
+          ButtonText={" 聯絡我們"}
+          TextStyle={styles.TextStyle}
+          ButtonStyle={styles.TimeSelectionStyle}
+          onPress={() => {
+            Linking.openURL("https://oblador.github.io/react-native-vector-icons/");
           }}
         />
       </View>
@@ -41,9 +56,9 @@ export default class AboutUS extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: Platform.OS === "ios" ? 20 : 0,
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
     backgroundColor: "rgb(40,44,52)"
   },
   TextStyle: {
@@ -57,16 +72,20 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   TimeSelectionStyle: {
-    width: 200,
-    height: 60,
+    width: 160,
+    height: 50,
     margin: 10,
-    borderRadius: 35,
+    borderRadius: 10,
+    borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(57,152,137)",
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-    shadowColor: "rgb(57,152,137)",
-    shadowOffset: { height: 1, width: 1 }
+    borderColor: "rgb(255,255,255)",
+    backgroundColor: "rgb(40,44,52)",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    shadowColor: "#aaa",
+    shadowOffset: { height: 2, width: 2 }
   }
 });

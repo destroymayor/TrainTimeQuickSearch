@@ -12,6 +12,7 @@ import requestGeolocation from "../../util/RequestGeolocation";
 import Button from "../../util/Button";
 import StationCode from "../../data/StationCode";
 import Storage from "../../data/Storage/ChooseHistory";
+import Snackbar from "../../util/Snackbar";
 import { Object } from "core-js";
 
 export default class HomePage extends Component {
@@ -53,23 +54,26 @@ export default class HomePage extends Component {
   }
 
   autoGeolocation() {
-    requestGeolocation().then(value => {
-      StationCode.map(MainArea => {
-        Object.keys(MainArea).map(MainAreaLocation => {
-          MainArea[MainAreaLocation].map(LocationValue => {
-            if (Object.keys(LocationValue)[0].includes(value.slice(0, -1))) {
-              this.setState({
-                MainArea: MainAreaLocation,
-                PointOfDeparture: Object.keys(LocationValue)[0],
-                PointOfDepartureCode: Object.values(LocationValue)[0][0],
-                ArrivalPoint: Object.keys(LocationValue)[0],
-                ArrivalPointCode: Object.values(LocationValue)[0][0]
-              });
-            }
+    requestGeolocation()
+      .then(value => {
+        StationCode.map(MainArea => {
+          Object.keys(MainArea).map(MainAreaLocation => {
+            MainArea[MainAreaLocation].map(LocationValue => {
+              if (Object.keys(LocationValue)[0].includes(value.slice(0, -1))) {
+                this.setState({
+                  MainArea: MainAreaLocation,
+                  PointOfDeparture: Object.keys(LocationValue)[0],
+                  PointOfDepartureCode: Object.values(LocationValue)[0][0]
+                });
+                Snackbar("查詢到最近的車站", Snackbar.LENGTH_SHORT);
+              }
+            });
           });
         });
+      })
+      .catch(error => {
+        Snackbar("請稍後再試", Snackbar.LENGTH_SHORT);
       });
-    });
   }
 
   showPickerFromStation(SinceAndAfter) {
@@ -148,12 +152,13 @@ export default class HomePage extends Component {
   };
 
   SiteInterchange() {
-    this.setState({
-      PointOfDeparture: this.state.ArrivalPoint,
-      PointOfDepartureCode: this.state.ArrivalPointCode,
-      ArrivalPoint: this.state.PointOfDeparture,
-      ArrivalPointCode: this.state.PointOfDepartureCode
-    });
+    this.setState(state => ({
+      PointOfDeparture: state.ArrivalPoint,
+      PointOfDepartureCode: state.ArrivalPointCode,
+      ArrivalPoint: state.PointOfDeparture,
+      ArrivalPointCode: state.PointOfDepartureCode
+    }));
+    Snackbar("起迄站已轉換", Snackbar.LENGTH_SHORT);
   }
 
   RequestTrainTimeData() {
@@ -298,6 +303,7 @@ export default class HomePage extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: Platform.OS === "ios" ? 20 : 0,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
