@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, Linking, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Platform, Linking, StatusBar, StyleSheet, View } from "react-native";
 
 import FeatherIcon from "react-native-vector-icons/Feather";
 
@@ -72,20 +72,13 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   TimeSelectionStyle: {
-    width: 160,
+    width: "100%",
     height: 50,
-    margin: 10,
-    borderRadius: 10,
-    borderWidth: 1,
+    marginTop: 10,
+    marginBottom: 10,
     justifyContent: "center",
     alignItems: "center",
     borderColor: "rgb(255,255,255)",
-    backgroundColor: "rgb(40,44,52)",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    shadowColor: "#aaa",
-    shadowOffset: { height: 2, width: 2 }
+    backgroundColor: "rgb(40,44,52)"
   }
 });

@@ -10,9 +10,11 @@ import DateTimePickerTime from "react-native-modal-datetime-picker";
 
 import requestGeolocation from "../../util/RequestGeolocation";
 import Button from "../../util/Button";
+import Snackbar from "../../util/Snackbar";
+
 import StationCode from "../../data/StationCode";
 import Storage from "../../data/Storage/ChooseHistory";
-import Snackbar from "../../util/Snackbar";
+
 import { Object } from "core-js";
 
 export default class HomePage extends Component {
@@ -41,11 +43,14 @@ export default class HomePage extends Component {
   }
 
   componentWillMount() {
+    //起站 storage load
     Storage.Load("PointOfDeparture")
       .then(ret => {
         this.setState({ PointOfDeparture: ret.name, PointOfDepartureCode: ret.code });
       })
       .catch(err => {});
+
+    //迄站 storage load
     Storage.Load("ArrivalPoint")
       .then(ret => {
         this.setState({ ArrivalPoint: ret.name, ArrivalPointCode: ret.code });
