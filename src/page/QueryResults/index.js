@@ -41,6 +41,11 @@ export default class QueryResults extends Component {
           RequestData: RequestTrainTimeData.data,
           shouldRenderView: true
         });
+
+        //取得列車動態資料
+        RequestTrainTimeData.data.map(item => {
+          this.RequestLiveBoardStation(item.DailyTrainInfo.TrainNo);
+        });
       } else {
         this.setState({ notInformation: false });
       }
@@ -105,6 +110,7 @@ export default class QueryResults extends Component {
                   : item.DailyTrainInfo.TrainTypeName.Zh_tw.includes("自強")
                     ? "自強號"
                     : item.DailyTrainInfo.TrainTypeName.Zh_tw;
+
               return (
                 <TouchableOpacity
                   onPress={() => {
