@@ -5,7 +5,6 @@ import FeatherIcon from "react-native-vector-icons/Feather";
 
 import Storage from "../../data/Storage/ChooseHistory";
 import Button from "../../util/Button";
-import Snackbar from "../../util/Snackbar";
 
 export default class AboutUS extends Component {
   constructor(props) {
@@ -39,7 +38,6 @@ export default class AboutUS extends Component {
           onPress={() => {
             Storage.Clear("PointOfDeparture");
             Storage.Clear("ArrivalPoint");
-            Snackbar("記錄已清除", Snackbar.LENGTH_SHORT);
           }}
         />
         <Button

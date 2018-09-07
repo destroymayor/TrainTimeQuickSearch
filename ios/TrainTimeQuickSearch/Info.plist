@@ -42,17 +42,17 @@
 	<string/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
 			<dict>
-        <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-        <true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
 			</dict>
-      <key>NSLocationWhenInUseUsageDescription</key>
-      <string>自動定位需要使用定位權限</string>
+			<key>NSLocationWhenInUseUsageDescription</key>
+			<string>自動定位需要使用定位權限</string>
 		</dict>
 	</dict>
 	<key>UIAppFonts</key>

@@ -10,7 +10,6 @@ import DateTimePickerTime from "react-native-modal-datetime-picker";
 
 import requestGeolocation from "../../util/RequestGeolocation";
 import Button from "../../util/Button";
-import Snackbar from "../../util/Snackbar";
 
 import StationCode from "../../data/StationCode";
 import Storage from "../../data/Storage/ChooseHistory";
@@ -70,15 +69,12 @@ export default class HomePage extends Component {
                   PointOfDeparture: Object.keys(LocationValue)[0],
                   PointOfDepartureCode: Object.values(LocationValue)[0][0]
                 });
-                Snackbar("查詢到最近的車站", Snackbar.LENGTH_SHORT);
               }
             });
           });
         });
       })
-      .catch(error => {
-        Snackbar("請稍後再試", Snackbar.LENGTH_SHORT);
-      });
+      .catch(error => {});
   }
 
   showPickerFromStation(SinceAndAfter) {
@@ -163,7 +159,6 @@ export default class HomePage extends Component {
       ArrivalPoint: state.PointOfDeparture,
       ArrivalPointCode: state.PointOfDepartureCode
     }));
-    Snackbar("起迄站已轉換", Snackbar.LENGTH_SHORT);
   }
 
   RequestTrainTimeData() {
