@@ -4,6 +4,7 @@ import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import EntypoIcon from "react-native-vector-icons/Entypo";
 
+import { Snackbar } from "react-native-paper";
 import Picker from "react-native-picker";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import DateTimePickerTime from "react-native-modal-datetime-picker";
@@ -21,6 +22,8 @@ export default class HomePage extends Component {
     super(props);
     const Dates = new Date();
     this.state = {
+      SnackbarText: "",
+      SnackbarVisible: false,
       QueryDates:
         Dates.getFullYear() +
         "-" +
@@ -64,17 +67,25 @@ export default class HomePage extends Component {
           Object.keys(MainArea).map(MainAreaLocation => {
             MainArea[MainAreaLocation].map(LocationValue => {
               if (Object.keys(LocationValue)[0].includes(value.slice(0, -1))) {
-                this.setState({
+                this.setState(state => ({
                   MainArea: MainAreaLocation,
                   PointOfDeparture: Object.keys(LocationValue)[0],
-                  PointOfDepartureCode: Object.values(LocationValue)[0][0]
-                });
+                  PointOfDepartureCode: Object.values(LocationValue)[0][0],
+                  SnackbarVisible: !state.visible,
+                  SnackbarText: "已查詢當地車站"
+                }));
               }
             });
           });
         });
       })
-      .catch(error => {});
+      .catch(error => {
+        console.log(error);
+        this.setState(state => ({
+          SnackbarVisible: !state.visible,
+          SnackbarText: "請稍候在試"
+        }));
+      });
   }
 
   showPickerFromStation(SinceAndAfter) {
@@ -157,7 +168,9 @@ export default class HomePage extends Component {
       PointOfDeparture: state.ArrivalPoint,
       PointOfDepartureCode: state.ArrivalPointCode,
       ArrivalPoint: state.PointOfDeparture,
-      ArrivalPointCode: state.PointOfDepartureCode
+      ArrivalPointCode: state.PointOfDepartureCode,
+      SnackbarVisible: !state.visible,
+      SnackbarText: "起迄站已轉換"
     }));
   }
 
@@ -201,6 +214,12 @@ export default class HomePage extends Component {
     return (
       <View style={styles.container}>
         {Platform.OS === "ios" ? <StatusBar barStyle="light-content" /> : null}
+        <Snackbar
+          duration={1200}
+          visible={this.state.SnackbarVisible}
+          onDismiss={() => this.setState({ SnackbarVisible: false })}>
+          {this.state.SnackbarText}
+        </Snackbar>
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
           is24Hour={true}
@@ -227,7 +246,7 @@ export default class HomePage extends Component {
           onCancel={this.hideDateTimePicker}
           neverDisableConfirmIOS={true}
         />
-        <View style={{ flexDirection: "row", marginBottom: 20 }}>
+        <View style={{ flexDirection: "row" }}>
           <Button
             ButtonText={this.state.PointOfDeparture + "站"}
             TextStyle={[styles.TextStyle, { fontSize: 20 }]}
@@ -236,10 +255,7 @@ export default class HomePage extends Component {
               this.showPickerFromStation("PointOfDeparture");
             }}
           />
-          <Button
-            ButtonText={<FeatherIcon name="chevron-right" size={35} color="rgb(255,255,255)" />}
-            ButtonStyle={styles.IconStyle}
-          />
+          <FeatherIcon style={[styles.IconStyle, { marginTop: 20 }]} name="chevron-right" size={35} color="rgb(255,255,255)" />
           <Button
             ButtonText={this.state.ArrivalPoint + "站"}
             TextStyle={[styles.TextStyle, { fontSize: 20 }]}
@@ -249,7 +265,7 @@ export default class HomePage extends Component {
             }}
           />
         </View>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", marginTop: 15 }}>
           <Button
             ButtonText={<FeatherIcon name="refresh-cw" size={35} color="rgb(255,255,255)" />}
             ButtonStyle={[styles.IconStyle, { marginRight: 15 }]}
@@ -265,7 +281,7 @@ export default class HomePage extends Component {
             }}
           />
         </View>
-        <View style={{ flexDirection: "row", marginTop: 20, marginBottom: 10 }}>
+        <View style={{ flexDirection: "row", marginTop: 15 }}>
           <Button
             ButtonIcon={<FeatherIcon name="calendar" size={20} color="rgb(255,255,255)" />}
             ButtonText={" " + this.state.QueryDates}
@@ -288,7 +304,8 @@ export default class HomePage extends Component {
           />
         </View>
         <Button
-          ButtonText={"查詢"}
+          ButtonText={" 查詢"}
+          ButtonIcon={<FeatherIcon name="search" size={20} color="rgb(255,255,255)" />}
           TextStyle={[styles.TextStyle, { fontSize: 20 }]}
           ButtonStyle={styles.TrainSearchStyle}
           onPress={() => {

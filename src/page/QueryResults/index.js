@@ -14,7 +14,8 @@ export default class QueryResults extends Component {
       shouldRenderView: false,
       notInformation: true,
       RequestData: [],
-      RequestPrice: []
+      RequestPrice: [],
+      LiveBoardStation: []
     };
   }
 
@@ -57,7 +58,19 @@ export default class QueryResults extends Component {
     try {
       const RequestTrainPriceData = await axios.get(params.RequestUrl_Price, { headers: getAuthorizationHeader() });
       this.setState({ RequestPrice: RequestTrainPriceData.data[0].Fares });
-      console.log(RequestTrainPriceData.data[0].Fares);
+      //console.log(RequestTrainPriceData.data[0].Fares);
+    } catch (error) {}
+  }
+
+  // 取得列車即時準點/延誤時間資料
+  async RequestLiveBoardStation(TrainNo) {
+    const RequestUrl_LiveBoardStation =
+      "http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/LiveTrainDelay?$filter=TrainNo%20eq%20'" + TrainNo + "'&$format=JSON";
+    try {
+      const RequestLiveBoardData = await axios.get(RequestUrl_LiveBoardStation, {
+        headers: getAuthorizationHeader()
+      });
+      this.state.LiveBoardStation.push(RequestLiveBoardData.data[0]);
     } catch (error) {}
   }
 
@@ -111,6 +124,19 @@ export default class QueryResults extends Component {
                     ? "自強號"
                     : item.DailyTrainInfo.TrainTypeName.Zh_tw;
 
+              //列車動態判斷
+              const LiveBoardStationName = this.state.LiveBoardStation.map(LiveBoardStationItem => {
+                if (LiveBoardStationItem != undefined) {
+                  if (LiveBoardStationItem.TrainNo == item.DailyTrainInfo.TrainNo) {
+                    return LiveBoardStationItem.DelayTime > 0 ? (
+                      <Text style={{ color: "rgb(230,100,10)" }} key={LiveBoardStationItem.TrainNo.toString()}>
+                        延誤
+                        {LiveBoardStationItem.DelayTime}分
+                      </Text>
+                    ) : null;
+                  }
+                }
+              });
               return (
                 <TouchableOpacity
                   onPress={() => {
@@ -153,8 +179,9 @@ export default class QueryResults extends Component {
                       {this.TimeDifferenceCalculation(item.OriginStopTime.DepartureTime, item.DestinationStopTime.ArrivalTime)}
                     </Text>
                   </View>
-                  <View style={[styles.TrainTimeDataListItem, { flexDirection: "row", alignItems: "center" }]}>
+                  <View style={[styles.TrainTimeDataListItem, { alignItems: "center" }]}>
                     <FeatherIcon name="chevron-right" size={25} color="rgb(255,255,255)" />
+                    {LiveBoardStationName}
                   </View>
                 </TouchableOpacity>
               );

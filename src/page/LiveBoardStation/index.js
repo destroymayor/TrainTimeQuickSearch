@@ -41,7 +41,7 @@ export default class LiveBoardStation extends Component {
         headers: getAuthorizationHeader()
       });
       this.setState({ LiveBoardStation: RequestLiveBoardData.data });
-      console.log("取得列車即時準點/延誤時間資料", RequestLiveBoardData.data);
+      //console.log("取得列車即時準點/延誤時間資料", RequestLiveBoardData.data);
     } catch (error) {}
   }
 
@@ -67,7 +67,7 @@ export default class LiveBoardStation extends Component {
       });
 
       this.setState({ StationTimetable: RequestStationTimetableData.data[0].StopTimes });
-      console.log("取得指定[日期],[車次]的時刻表資料", RequestStationTimetableData.data[0].StopTimes);
+      // console.log("取得指定[日期],[車次]的時刻表資料", RequestStationTimetableData.data[0].StopTimes);
     } catch (error) {}
   }
 

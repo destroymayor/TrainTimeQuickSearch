@@ -27,7 +27,9 @@ const requestGeolocation = () =>
                   reject(error);
                 });
             },
-            error => {},
+            error => {
+              console.log(error);
+            },
             {
               enableHighAccuracy: false,
               timeout: 5000
@@ -35,8 +37,8 @@ const requestGeolocation = () =>
           );
         }
       } catch (err) {
-        reject(error);
-        // console.log(err);
+        reject(err);
+        console.log(err);
       }
     } else {
       navigator.geolocation.getCurrentPosition(
@@ -55,12 +57,12 @@ const requestGeolocation = () =>
             })
             .catch(error => {
               reject(error);
-              // console.log(error);
+              console.log(error);
             });
         },
         error => {
           reject(error);
-          //console.log(error);
+          console.log(error);
         },
         {
           enableHighAccuracy: false,
