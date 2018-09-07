@@ -274,6 +274,11 @@ export default class HomePage extends Component {
             }}
           />
           <Button
+            ButtonText={<FeatherIcon name="heart" size={35} color="rgb(255,255,255)" />}
+            ButtonStyle={[styles.IconStyle, { marginRight: 15 }]}
+            onPress={() => {}}
+          />
+          <Button
             ButtonText={<EntypoIcon name="location" size={35} color="rgb(255,255,255)" />}
             ButtonStyle={styles.IconStyle}
             onPress={() => {
@@ -351,7 +356,7 @@ const styles = StyleSheet.create({
     width: "40%",
     height: 50,
     margin: 10,
-    borderRadius: 35,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgb(57,152,137)",
@@ -364,7 +369,7 @@ const styles = StyleSheet.create({
     width: "60%",
     height: 50,
     margin: 10,
-    borderRadius: 35,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgb(255,255,255)",
     backgroundColor: "rgb(40,44,52)",

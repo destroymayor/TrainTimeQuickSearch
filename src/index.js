@@ -7,11 +7,13 @@ import Icon from "react-native-vector-icons/Feather";
 import HomePage from "./page/HomePage";
 import QueryResult from "./page/QueryResults";
 import LiveBoardStation from "./page/LiveBoardStation";
+import FavoriteRoute from "./page/FavoriteRoute";
 import AboutUs from "./page/AboutUs";
 
 const Index = createBottomTabNavigator(
   {
     查詢: { screen: HomePage },
+    最愛: { screen: FavoriteRoute },
     關於: { screen: AboutUs }
   },
   {
@@ -19,10 +21,19 @@ const Index = createBottomTabNavigator(
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
         let iconName;
-        if (routeName === "查詢") {
-          iconName = "clock";
-        } else if (routeName === "關於") {
-          iconName = "help-circle";
+        switch (routeName) {
+          case "查詢":
+            iconName = "clock";
+            break;
+          case "最愛":
+            iconName = "heart";
+            break;
+          case "關於":
+            iconName = "help-circle";
+            break;
+
+          default:
+            break;
         }
 
         return <Icon name={iconName} size={25} color={tintColor} />;
